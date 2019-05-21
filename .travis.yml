@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t sylon/docker-react -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -d sylon/multi-docker npm run test -- --coverage
+
+after_success:
+  - docker build -t sylon/multi-client ./client
+  - docker build -t sylon/multi-nginx ./nginx
+  - docker build -t sylon/multi-server ./server
+  - docker build -t sylon/multi-worker ./worker
+# Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push sylon/multi-client
+  - docker push sylon/multi-nginx
+  - docker push sylon/multi-server
+  - docker push sylon/multi-worker
