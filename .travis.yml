@@ -3,10 +3,10 @@ services:
   - docker
 
 before_install:
-  - docker build -t sylon/docker-react -f ./client/Dockerfile.dev ./client
+  - docker build -t sylon/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -d sylon/multi-docker npm run test -- --coverage
+  - docker run -d sylon/react-test npm run test -- --coverage
 
 after_success:
   - docker build -t sylon/multi-client ./client
